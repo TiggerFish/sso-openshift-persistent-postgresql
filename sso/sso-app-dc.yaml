@@ -1,0 +1,89 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    application: sso
+    component: server
+    rhsso: 7.5.3.GA
+  name: sso
+  namespace: sso
+spec:
+  replicas: 1
+  selector:
+    deploymentConfig: sso
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        application: sso
+        component: server
+        deploymentConfig: sso
+      name: sso
+    spec:
+      containers:
+      - env:
+        - name: DB_MIN_POOL_SIZE
+        - name: DB_MAX_POOL_SIZE
+        - name: DB_TX_ISOLATION
+        - name: HTTPS_KEYSTORE_TYPE
+        - name: SSO_SERVICE_USERNAME
+        - name: SSO_SERVICE_PASSWORD
+        envFrom:
+          - configMapRef:
+              name: sso-cm
+        image: <IMAGE>
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - /opt/eap/bin/livenessProbe.sh
+          initialDelaySeconds: 60
+        name: sso
+        ports:
+        - containerPort: 8778
+          name: jolokia
+          protocol: TCP
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        - containerPort: 8888
+          name: ping
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - /opt/eap/bin/readinessProbe.sh
+        resources:
+          limits:
+            memory: 1Gi
+        volumeMounts:
+        - mountPath: /etc/eap-secret-volume
+          name: eap-keystore-volume
+          readOnly: true
+        - mountPath: /etc/jgroups-encrypt-secret-volume
+          name: eap-jgroups-keystore-volume
+          readOnly: true
+        - mountPath: /etc/sso-secret-volume
+          name: sso-truststore-volume
+          readOnly: true
+      terminationGracePeriodSeconds: 75
+      volumes:
+      - name: eap-keystore-volume
+        secret:
+          secretName: sso-app-secret
+      - name: eap-jgroups-keystore-volume
+        secret:
+          secretName: sso-app-secret
+      - name: sso-truststore-volume
+        secret:
+          secretName: sso-app-secret
+  triggers:
+  - type: ConfigChange

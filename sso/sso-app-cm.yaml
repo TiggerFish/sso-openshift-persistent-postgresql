@@ -1,0 +1,31 @@
+apiVersion: v1
+data:
+  DB_SERVICE_PREFIX_MAPPING: sso-postgresql=DB
+  DB_JNDI: java:jboss/datasources/KeycloakDS
+  DB_USERNAME: sso-user
+  DB_PASSWORD: sso-pass
+  DB_DATABASE: sso-db
+  TX_DATABASE_PREFIX_MAPPING: sso-postgresql=DB
+  JGROUPS_PING_PROTOCOL: openshift.DNS_PING
+  OPENSHIFT_DNS_PING_SERVICE_NAME: sso-ping
+  OPENSHIFT_DNS_PING_SERVICE_PORT: "8888"
+  HTTPS_KEYSTORE_DIR: /etc/eap-secret-volume
+  HTTPS_KEYSTORE: sso.jks
+  HTTPS_NAME: jboss
+  HTTPS_PASSWORD: https-pass
+  JGROUPS_ENCRYPT_SECRET: sso-app-secret
+  JGROUPS_ENCRYPT_KEYSTORE_DIR: /etc/jgroups-encrypt-secret-volume
+  JGROUPS_ENCRYPT_KEYSTORE: jgroups.jceks
+  JGROUPS_ENCRYPT_NAME: jgroups
+  JGROUPS_ENCRYPT_PASSWORD: jgroups-pass
+  JGROUPS_CLUSTER_PASSWORD: random-pass
+  SSO_ADMIN_USERNAME: admin
+  SSO_ADMIN_PASSWORD: admin-pass
+  SSO_REALM: test-realm
+  SSO_TRUSTSTORE: truststore.jks
+  SSO_TRUSTSTORE_DIR: /etc/sso-secret-volume
+  SSO_TRUSTSTORE_PASSWORD: truststore-pass
+kind: ConfigMap
+metadata:
+  name: sso-cm
+  namespace: sso

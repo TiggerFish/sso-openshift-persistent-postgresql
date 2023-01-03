@@ -1,0 +1,20 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    description: Route for application's https service.
+  labels:
+    application: sso
+    component: server
+    rhsso: 7.5.3.GA
+  name: secure-sso
+  namespace: sso
+spec:
+  host: sso.hostname
+  tls:
+    termination: passthrough
+  to:
+    kind: Service
+    name: secure-sso
+    weight: 100
+  wildcardPolicy: None

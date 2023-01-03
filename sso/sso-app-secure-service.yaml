@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: The web server's https port.
+  labels:
+    application: sso
+    component: server
+    rhsso: 7.5.3.GA
+  name: secure-sso
+  namespace: sso
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8443
+  selector:
+    deploymentConfig: sso
