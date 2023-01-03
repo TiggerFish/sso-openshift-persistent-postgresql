@@ -1,0 +1,1 @@
+# sso-openshift-persistent-postgresql
